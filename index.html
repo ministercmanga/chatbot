@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Chatbot</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #cfcfcf;
+        }
+
+        .chat-container {
+            width: 350px;
+            height: 500px;
+            background-color: #e6e1e1;
+            border-radius: 20px;
+            border: 2px solid #4fa4e7;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chat-header {
+            background-color: #3366cc;
+            color: black;
+            padding: 15px;
+            text-align: center;
+            font-size: 35px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000000;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        #chatbox {
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ddd;
+            text-align: left;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            align-self: flex-end;
+            background-color: #5d57e8;
+            color: white;
+            text-align: right;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-top: 1px solid #ddd;
+        }
+            #userInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 15px;
+            outline: none;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        #sendButton {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+            #sendButton img {
+                width: 30px;
+                height: 30px;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chatbot</div>
+        <div id="chatbox"></div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button id="sendButton" onclick="sendMessage()">
+                <img src="data:image/png;base64,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" alt="Send">
+            </button>
+        </div>
+    </div>
+    
+        <script>
+            function sendMessage() {
+                var message = document.getElementById("userInput").value;
+                if (message.trim() === "") {
+                    return;
+                }
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({message: message})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var chatbox = document.getElementById("chatbox");
+
+                    var userMessage = document.createElement("div");
+                    userMessage.className = "chat-message user-message";
+                    userMessage.textContent = message;
+                    chatbox.appendChild(userMessage);
+
+                    var botMessage = document.createElement("div");
+                    botMessage.className = "chat-message bot-message";
+                    botMessage.textContent = data.response;
+                    chatbox.appendChild(botMessage);
+
+                    document.getElementById("userInput").value = "";
+
+                    chatbox.scrollTop = chatbox.scrollHeight;
+
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("There was an error communicating with the server.");
+                });
+            }
+            document.getElementById("userInput").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    sendMessage();
+                    event.preventDefault(); // Prevent the default form submission
+                }
+            });
+        </script>
+</body>
+</html>
